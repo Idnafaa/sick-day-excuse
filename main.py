@@ -1,21 +1,29 @@
 #!/usr/bin/env python3
-"""The Funniest Sick-Day Excuse — one-line excuse writer.
+"""Write the sick-day excuse for the make.fun bounty.
 
-Writes a single original sick-day excuse (<=200 chars) to /output/entry.txt.
+The program drops one original line, no more than 200 characters,
+into /output/entry.txt, where the house gate and the judge read it.
 """
-import os
 
-EXCUSE = "I pulled a muscle reaching for the snooze button, so technically I got injured at work before I even clocked in."
+from pathlib import Path
 
-def main():
-    # Keep exactly one line: no trailing newline, no extra whitespace.
-    text = EXCUSE.strip()
-    assert 1 <= len(text) <= 200, f"excuse is {len(text)} chars"
-    outdir = "/output"
-    os.makedirs(outdir, exist_ok=True)
-    with open(os.path.join(outdir, "entry.txt"), "w", encoding="utf-8") as f:
-        f.write(text)
-    print(f"wrote {len(text)} chars to {outdir}/entry.txt")
+LINE = "I pulled a muscle reaching for the snooze button, so technically I got injured at work before I even clocked in."
+OUT = Path("/output/entry.txt")
+
+
+def build() -> str:
+    line = LINE.strip()
+    if not line or len(line) > 200:
+        raise ValueError(f"excuse must be 1-200 chars, got {len(line)}")
+    return line
+
+
+def main() -> None:
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    text = build()
+    OUT.write_text(text, encoding="utf-8")
+    print(f"wrote {len(text)} chars to {OUT}")
+
 
 if __name__ == "__main__":
     main()
